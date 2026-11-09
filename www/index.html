@@ -1,8 +1,14 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<script>try{var t=localStorage.getItem("itma_tema");if(t)document.documentElement.setAttribute("data-tema",t);}catch(e){}</script>
+<script>
+try {
+  var t = localStorage.getItem("itma_tema");
+  if (t) document.documentElement.setAttribute("data-tema", t);
+} catch(e) {}
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#101827">
 <meta name="mobile-web-app-capable" content="yes">
@@ -12,25 +18,91 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="stylesheet" href="mobile.css">
-<title>Clases</title>
+<title>ITMA Academy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Syne:wght@700;800&family=Carlito:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=17">
+<link rel="stylesheet" href="styles.css?v=18">
 </head>
+
 <body>
 
-<header>
+<header class="itma-header">
+  <button type="button" id="menuAbrir" class="menu-hamburguesa"
+    aria-label="Abrir menú" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+
   <h1>Clases</h1>
+
   <input id="q" type="search" placeholder="Buscar clases…">
+
   <div class="acc">
-    <button class="btn peq" id="tema" title="Cambiar tema" aria-label="Cambiar entre tema claro y oscuro">☀️</button>
-    <button type="button" id="quien" class="quienbtn" style="display:none" title="Mis datos"></button>
+    <button class="btn peq" id="tema" title="Cambiar tema"
+      aria-label="Cambiar entre tema claro y oscuro">☀️</button>
+
+    <!-- Se conservan para que app.js siga funcionando -->
+    <button type="button" id="quien" class="quienbtn"
+      style="display:none" title="Mis datos"></button>
+
     <button class="btn peq" id="salir" style="display:none">Salir</button>
-    <button class="btn peq" id="admin" style="display:none">Acceso profesor</button>
+
+    <button class="btn peq" id="admin" style="display:none">
+      Acceso profesor
+    </button>
   </div>
 </header>
 
+<!-- Fondo oscuro del menú -->
+<div id="menuFondo" class="menu-fondo"></div>
+
+<!-- Menú lateral -->
+<aside id="menuLateral" class="menu-lateral"
+  aria-hidden="true">
+
+  <div class="menu-cabecera">
+    <div class="menu-logo">ITMA</div>
+    <div>
+      <strong>ITMA Academy</strong>
+      <small>Plataforma educativa</small>
+    </div>
+    <button type="button" id="menuCerrar" class="menu-cerrar"
+      aria-label="Cerrar menú">×</button>
+  </div>
+
+  <div class="menu-perfil">
+    <div class="menu-avatar">👤</div>
+    <div class="menu-datos">
+      <strong id="menuNombre">Estudiante</strong>
+      <small id="menuCorreo">Tu cuenta ITMA</small>
+    </div>
+  </div>
+
+  <div class="menu-separador"></div>
+
+  <p class="menu-etiqueta">MI CUENTA</p>
+
+  <button type="button" id="menuEditar" class="menu-opcion">
+    <span class="menu-icono">✎</span>
+    <span>Editar mi perfil</span>
+    <span class="menu-flecha">›</span>
+  </button>
+
+  <div class="menu-separador"></div>
+
+  <button type="button" id="menuSalir" class="menu-opcion menu-salir">
+    <span class="menu-icono">↪</span>
+    <span>Cerrar sesión</span>
+  </button>
+
+  <div class="menu-pie">
+    <strong>ITMA Academy</strong>
+    <small>Aprende · Practica · Avanza</small>
+    <small>Versión móvil de prueba</small>
+  </div>
+</aside>
+
 <main>
+
   <div class="panel" id="panel">
     <h2>Subir una clase o un PDF</h2>
     <p class="hint">Solo tú ves este panel. El archivo (video o PDF) se guarda en la carpeta que elijas y aparece para todos.</p>
@@ -76,7 +148,6 @@
     <div id="qpend"></div>
   </div>
 
-
   <p class="nota" id="nota"></p>
 
   <section id="home">
@@ -84,7 +155,6 @@
     <button class="btn main" id="continuar" hidden></button>
     <div id="grid"></div>
     <p class="vacio" id="vacio" hidden>No se encontraron clases.</p>
-    
   </section>
 
   <section id="watch">
@@ -103,7 +173,10 @@
         <div id="qlista"></div>
       </section>
     </div>
-    <aside id="side"><h3>Más clases</h3><div id="list"></div></aside>
+    <aside id="side">
+      <h3>Más clases</h3>
+      <div id="list"></div>
+    </aside>
   </section>
 
 </main>
@@ -124,7 +197,9 @@
           <button type="button" id="lver" aria-label="Mostrar u ocultar el código">👁</button>
         </div>
       </label>
-      <button class="btn main" id="lok"><span class="lt">Entrar</span><span class="spin"></span></button>
+      <button class="btn main" id="lok">
+        <span class="lt">Entrar</span><span class="spin"></span>
+      </button>
     </div>
     <p id="lerr"></p>
     <div class="lpie">
@@ -154,7 +229,10 @@
   <div class="pdfbox">
     <div class="pdfbar">
       <h2 id="pdftitle"></h2>
-      <div><a class="btn" id="pdfopen" target="_blank" rel="noopener">Abrir en Drive</a><button class="btn" id="pdfclose">Cerrar</button></div>
+      <div>
+        <a class="btn" id="pdfopen" target="_blank" rel="noopener">Abrir en Drive</a>
+        <button class="btn" id="pdfclose">Cerrar</button>
+      </div>
     </div>
     <iframe id="pdfframe" title="PDF"></iframe>
   </div>
@@ -163,10 +241,90 @@
 <script>window.ITMA_MOBILE_APP = true;</script>
 <script src="app.js?v=17"></script>
 <script src="mobile-mode.js"></script>
+
 <script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(console.error));
-}
+(function () {
+  const $ = id => document.getElementById(id);
+
+  const abrir = $("menuAbrir");
+  const cerrar = $("menuCerrar");
+  const fondo = $("menuFondo");
+  const lateral = $("menuLateral");
+
+  function abrirMenu() {
+    if (!$("quien").textContent.trim()) return;
+    lateral.classList.add("abierto");
+    fondo.classList.add("visible");
+    lateral.setAttribute("aria-hidden", "false");
+    abrir.setAttribute("aria-expanded", "true");
+    document.body.classList.add("menu-activo");
+  }
+
+  function cerrarMenu() {
+    lateral.classList.remove("abierto");
+    fondo.classList.remove("visible");
+    lateral.setAttribute("aria-hidden", "true");
+    abrir.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("menu-activo");
+  }
+
+  function actualizarMenu() {
+    const usuario = $("quien").textContent.trim();
+    const correo = $("pf-email").textContent.trim();
+
+    abrir.classList.toggle("menu-visible", !!usuario);
+    $("menuNombre").textContent = usuario
+      .replace(/^👤\s*/, "")
+      .replace(/\s+✎$/, "") || "Estudiante";
+
+    $("menuCorreo").textContent = correo || "Cuenta de estudiante";
+  }
+
+  abrir.addEventListener("click", abrirMenu);
+  cerrar.addEventListener("click", cerrarMenu);
+  fondo.addEventListener("click", cerrarMenu);
+
+  $("menuEditar").addEventListener("click", function () {
+    cerrarMenu();
+    $("quien").click();
+    setTimeout(function () {
+      $("menuCorreo").textContent =
+        $("pf-email").textContent || "Cuenta de estudiante";
+    }, 100);
+  });
+
+  $("menuSalir").addEventListener("click", function () {
+    cerrarMenu();
+    $("salir").click();
+  });
+
+  // Mantiene actualizado el nombre al iniciar sesión o editar el perfil.
+  const observador = new MutationObserver(actualizarMenu);
+  observador.observe($("quien"), {
+    childList: true,
+    characterData: true,
+    attributes: true,
+    subtree: true
+  });
+
+  observador.observe($("salir"), {
+    attributes: true
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") cerrarMenu();
+  });
+
+  actualizarMenu();
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("./service-worker.js")
+        .catch(console.error);
+    });
+  }
+})();
 </script>
+
 </body>
 </html>
