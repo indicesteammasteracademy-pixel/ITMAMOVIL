@@ -1,7 +1,452 @@
-/* ITMA Academy Mobile: ajustes exclusivos de la app */
-#admin, #lprof, #panel, #panelAlumnos, #panelActividad { display: none !important; }
-header { padding-top: max(12px, env(safe-area-inset-top)); }
-body { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
-button, .btn, .tab, .card { -webkit-tap-highlight-color: transparent; }
-input, textarea, select { font-size: 16px; }
-#watch { padding-bottom: env(safe-area-inset-bottom); }
+/* =====================================================
+   ITMA ACADEMY - ESTILOS EXCLUSIVOS PARA LA APP MÓVIL
+   ===================================================== */
+
+:root {
+  --menu-ancho: 310px;
+}
+
+/* Ajustes generales */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  min-height: 100%;
+  background: var(--bg, #03060f);
+}
+
+body {
+  min-height: 100vh;
+  padding-bottom: env(safe-area-inset-bottom);
+  overflow-x: hidden;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Encabezado */
+.itma-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  min-height: 64px;
+  padding-top: max(10px, env(safe-area-inset-top));
+  background: var(--cab, rgba(3, 6, 15, .96));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.itma-header h1 {
+  display: block;
+  font-size: 1.15rem;
+}
+
+.menu-hamburguesa {
+  width: 43px;
+  height: 43px;
+  flex: 0 0 43px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px;
+  border: 1px solid var(--line, #12254d);
+  border-radius: 12px;
+  background: var(--card, #0a1120);
+  color: var(--text, #eaf2ff);
+}
+
+.menu-hamburguesa span {
+  display: block;
+  width: 21px;
+  height: 2px;
+  border-radius: 5px;
+  background: currentColor;
+}
+
+.menu-hamburguesa.menu-visible {
+  display: flex !important;
+}
+
+/* Ocultar los controles antiguos: siguen disponibles para app.js */
+#quien,
+#salir,
+#admin,
+#lprof {
+  display: none !important;
+}
+
+/* Fondo del menú */
+.menu-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0, 0, 0, .65);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .25s ease, visibility .25s ease;
+}
+
+.menu-fondo.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Panel lateral */
+.menu-lateral {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: min(var(--menu-ancho), 88vw);
+  display: flex;
+  flex-direction: column;
+  padding: max(22px, env(safe-area-inset-top)) 19px
+           max(20px, env(safe-area-inset-bottom));
+  background: var(--card, #0a1120);
+  color: var(--text, #eaf2ff);
+  border-right: 1px solid var(--line, #12254d);
+  box-shadow: 15px 0 50px rgba(0, 0, 0, .35);
+  transform: translateX(-105%);
+  visibility: hidden;
+  transition: transform .28s ease, visibility .28s ease;
+}
+
+.menu-lateral.abierto {
+  transform: translateX(0);
+  visibility: visible;
+}
+
+.menu-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 22px;
+}
+
+.menu-logo {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #22c7f0, #0754a5);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+.menu-cabecera strong,
+.menu-cabecera small,
+.menu-datos strong,
+.menu-datos small,
+.menu-pie strong,
+.menu-pie small {
+  display: block;
+}
+
+.menu-cabecera strong {
+  font-size: .98rem;
+}
+
+.menu-cabecera small,
+.menu-datos small,
+.menu-pie small {
+  margin-top: 4px;
+  color: var(--muted, #7f95bd);
+  font-size: .78rem;
+  overflow-wrap: anywhere;
+}
+
+.menu-cerrar {
+  width: 35px;
+  height: 35px;
+  margin-left: auto;
+  border: 1px solid var(--line, #12254d);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text, #eaf2ff);
+  font-size: 1.5rem;
+}
+
+.menu-perfil {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 17px 13px;
+  border: 1px solid var(--line, #12254d);
+  border-radius: 15px;
+  background: var(--bg, #03060f);
+}
+
+.menu-avatar {
+  width: 43px;
+  height: 43px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 43px;
+  border-radius: 50%;
+  background: rgba(34, 199, 240, .15);
+  font-size: 1.3rem;
+}
+
+.menu-datos {
+  min-width: 0;
+}
+
+.menu-datos strong {
+  font-size: .9rem;
+  overflow-wrap: anywhere;
+}
+
+.menu-separador {
+  height: 1px;
+  margin: 19px 0;
+  background: var(--line, #12254d);
+}
+
+.menu-etiqueta {
+  margin: 0 0 9px;
+  color: var(--muted, #7f95bd);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+
+.menu-opcion {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text, #eaf2ff);
+  text-align: left;
+  font-size: .92rem;
+}
+
+.menu-opcion:active,
+.menu-opcion:hover {
+  background: rgba(34, 199, 240, .09);
+  border-color: var(--line, #12254d);
+}
+
+.menu-icono {
+  width: 25px;
+  color: var(--accent, #22c7f0);
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.menu-flecha {
+  margin-left: auto;
+  color: var(--muted, #7f95bd);
+  font-size: 1.4rem;
+}
+
+.menu-salir {
+  color: #ff8585;
+}
+
+.menu-salir .menu-icono {
+  color: #ff8585;
+}
+
+.menu-pie {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--line, #12254d);
+}
+
+.menu-pie strong {
+  font-size: .88rem;
+}
+
+/* Contenido */
+main {
+  width: 100%;
+  padding: 20px 15px 45px;
+}
+
+#home,
+#watch {
+  width: 100%;
+}
+
+#grid {
+  width: 100%;
+}
+
+.grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+}
+
+.card {
+  min-width: 0;
+}
+
+.card img,
+.thumb img {
+  max-width: 100%;
+}
+
+.tabs {
+  padding-bottom: 5px;
+  scrollbar-width: thin;
+}
+
+.tab {
+  min-height: 42px;
+}
+
+.btn,
+.menu-opcion,
+.menu-hamburguesa {
+  touch-action: manipulation;
+}
+
+/* Formularios y ventanas */
+input,
+textarea,
+select {
+  max-width: 100%;
+  font-size: 16px;
+}
+
+.login {
+  padding:
+    max(16px, env(safe-area-inset-top))
+    15px
+    max(18px, env(safe-area-inset-bottom));
+}
+
+.login-box {
+  width: 100%;
+  max-width: 520px;
+}
+
+.pmodal,
+.pdfmodal {
+  padding:
+    max(12px, env(safe-area-inset-top))
+    12px
+    max(12px, env(safe-area-inset-bottom));
+}
+
+/* Vista de clase */
+#watch.show {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 22px;
+}
+
+#player,
+#player iframe,
+#player video {
+  max-width: 100%;
+}
+
+#side {
+  min-width: 0;
+}
+
+#side .item .thumb {
+  min-width: 110px;
+}
+
+/* Ocultar herramientas de profesor en la aplicación */
+#panel,
+#panelAlumnos,
+#panelActividad,
+#admin,
+#lprof {
+  display: none !important;
+}
+
+/* Evitar desplazamiento detrás del menú abierto */
+body.menu-activo {
+  overflow: hidden;
+}
+
+/* Pantallas pequeñas */
+@media (max-width: 600px) {
+  .itma-header {
+    gap: 9px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .itma-header h1 {
+    display: block;
+    font-size: 1rem;
+  }
+
+  #q {
+    order: 5;
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+
+  .acc {
+    margin-left: auto;
+  }
+
+  main {
+    padding: 16px 12px 35px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .info {
+    padding: 13px 15px 16px;
+  }
+
+  #watch.show {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .lform {
+    grid-template-columns: 1fr;
+  }
+
+  #lok {
+    width: 100%;
+  }
+
+  .pdfbar {
+    flex-wrap: wrap;
+  }
+}
+
+/* Respeto a la preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
