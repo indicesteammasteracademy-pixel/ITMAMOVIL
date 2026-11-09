@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<script>try{var t=localStorage.getItem("itma_tema");if(t)document.documentElement.setAttribute("data-tema",t);}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ITMA Academy">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="mobile.css">
+<title>Clases</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Syne:wght@700;800&family=Carlito:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=17">
+</head>
+<body>
+
+<header>
+  <h1>Clases</h1>
+  <input id="q" type="search" placeholder="Buscar clases…">
+  <div class="acc">
+    <button class="btn peq" id="tema" title="Cambiar tema" aria-label="Cambiar entre tema claro y oscuro">☀️</button>
+    <button type="button" id="quien" class="quienbtn" style="display:none" title="Mis datos"></button>
+    <button class="btn peq" id="salir" style="display:none">Salir</button>
+    <button class="btn peq" id="admin" style="display:none">Acceso profesor</button>
+  </div>
+</header>
+
+<main>
+  <div class="panel" id="panel">
+    <h2>Subir una clase o un PDF</h2>
+    <p class="hint">Solo tú ves este panel. El archivo (video o PDF) se guarda en la carpeta que elijas y aparece para todos.</p>
+    <div class="row">
+      <input type="text" id="ptitulo" placeholder="Título (de la clase o del PDF)">
+      <select id="pmod" aria-label="Módulo"></select>
+      <input type="file" id="parchivo" accept="video/*,application/pdf" style="color:var(--muted);max-width:100%">
+      <label><input type="checkbox" id="pbloq" checked> Subir bloqueada</label>
+      <label><input type="checkbox" id="pavisar" checked> Avisar por correo si sale desbloqueada</label>
+      <button class="btn main" id="pok">Subir archivo</button>
+    </div>
+    <div class="bar" id="bar"><div id="fill"></div></div>
+    <p id="pmsg"></p>
+  </div>
+
+  <div class="panel" id="panelAlumnos">
+    <h2>Alumnos registrados</h2>
+    <p class="hint">Solo ellos pueden entrar. Agrega su correo; si dejas el código vacío, se crea uno solo. Pásale el código al alumno.</p>
+    <div class="row">
+      <input type="text" id="anombre" placeholder="Nombre" autocomplete="off">
+      <input type="text" id="aapellido" placeholder="Apellido" autocomplete="off">
+      <input type="text" id="aemail" placeholder="correo del alumno" autocapitalize="none">
+      <input type="text" id="acode" placeholder="código (opcional)" autocapitalize="none">
+      <button class="btn main" id="aok">Agregar alumno</button>
+    </div>
+    <p id="amsg"></p>
+    <div id="alista"></div>
+  </div>
+
+  <div class="panel" id="panelActividad">
+    <h2>Actividad de los alumnos</h2>
+    <p class="hint">Quién entró, cuándo fue su última visita y cuántas clases ha visto. Los que llevan más de 7 días sin entrar salen marcados.</p>
+    <div class="row">
+      <button class="btn main" id="actbtn">Ver actividad</button>
+      <select id="actorden" aria-label="Ordenar">
+        <option value="inactivos">Más tiempo sin entrar primero</option>
+        <option value="recientes">Entraron más recientemente primero</option>
+        <option value="avance">Menos clases vistas primero</option>
+      </select>
+    </div>
+    <div id="actres"></div>
+    <h3 class="subt">Preguntas sin responder</h3>
+    <div id="qpend"></div>
+  </div>
+
+
+  <p class="nota" id="nota"></p>
+
+  <section id="home">
+    <nav class="tabs" id="tabs"></nav>
+    <button class="btn main" id="continuar" hidden></button>
+    <div id="grid"></div>
+    <p class="vacio" id="vacio" hidden>No se encontraron clases.</p>
+    
+  </section>
+
+  <section id="watch">
+    <div>
+      <button class="btn" id="back">← Todas las clases</button>
+      <div id="player"></div>
+      <h2 id="wtitle"></h2>
+      <p class="sub" id="wsub"></p>
+      <section class="qa" id="qa" hidden>
+        <h3>💬 Preguntas de la clase</h3>
+        <div class="qform" id="qform">
+          <textarea id="qtexto" maxlength="500" rows="3" placeholder="Escribe tu duda sobre esta clase…"></textarea>
+          <button class="btn main" id="qenviar">Enviar pregunta</button>
+        </div>
+        <p id="qmsg"></p>
+        <div id="qlista"></div>
+      </section>
+    </div>
+    <aside id="side"><h3>Más clases</h3><div id="list"></div></aside>
+  </section>
+
+</main>
+
+<div class="login" id="login">
+  <div class="login-box">
+    <div class="lhead">
+      <h2>Bienvenido a ITMA Academy</h2>
+      <p>Ingresa con el correo con el que te registraron y tu código personal.</p>
+    </div>
+    <div class="lform">
+      <label class="campo"><span>Correo</span>
+        <input type="text" id="lemail" placeholder="tucorreo@gmail.com" autocomplete="email" autocapitalize="none" inputmode="email">
+      </label>
+      <label class="campo"><span>Código personal</span>
+        <div class="pw">
+          <input type="password" id="lcode" placeholder="••••••" autocomplete="current-password">
+          <button type="button" id="lver" aria-label="Mostrar u ocultar el código">👁</button>
+        </div>
+      </label>
+      <button class="btn main" id="lok"><span class="lt">Entrar</span><span class="spin"></span></button>
+    </div>
+    <p id="lerr"></p>
+    <div class="lpie">
+      <span>Solo tendrás que hacerlo una vez en este dispositivo.</span>
+      <button type="button" class="linkbtn" id="lprof" style="display:none">Soy profesor</button>
+    </div>
+  </div>
+</div>
+
+<div class="pmodal" id="perfil">
+  <div class="pbox">
+    <h2>Mis datos</h2>
+    <p class="mail">Correo: <b id="pf-email"></b> <small>(no se puede cambiar)</small></p>
+    <input type="text" id="pf-nombre" placeholder="Nombre" autocomplete="given-name">
+    <input type="text" id="pf-apellido" placeholder="Apellido" autocomplete="family-name">
+    <input type="password" id="pf-code" placeholder="Nuevo código (déjalo vacío para no cambiarlo)" autocomplete="new-password">
+    <input type="password" id="pf-code2" placeholder="Repite el nuevo código" autocomplete="new-password">
+    <p id="pf-msg"></p>
+    <div class="prow">
+      <button class="btn main" id="pf-ok">Guardar</button>
+      <button class="btn" id="pf-no">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="pdfmodal" id="pdfmodal">
+  <div class="pdfbox">
+    <div class="pdfbar">
+      <h2 id="pdftitle"></h2>
+      <div><a class="btn" id="pdfopen" target="_blank" rel="noopener">Abrir en Drive</a><button class="btn" id="pdfclose">Cerrar</button></div>
+    </div>
+    <iframe id="pdfframe" title="PDF"></iframe>
+  </div>
+</div>
+
+<script>window.ITMA_MOBILE_APP = true;</script>
+<script src="app.js?v=17"></script>
+<script src="mobile-mode.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(console.error));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+/* ITMA Academy Mobile: ajustes exclusivos de la app */
+#admin, #lprof, #panel, #panelAlumnos, #panelActividad { display: none !important; }
+header { padding-top: max(12px, env(safe-area-inset-top)); }
+body { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+button, .btn, .tab, .card { -webkit-tap-highlight-color: transparent; }
+input, textarea, select { font-size: 16px; }
+#watch { padding-bottom: env(safe-area-inset-bottom); }
