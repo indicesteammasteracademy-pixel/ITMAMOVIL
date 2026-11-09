@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Descargar el proyecto
+      - name: Descargar proyecto
         uses: actions/checkout@v4
 
       - name: Configurar Node.js
@@ -47,22 +47,22 @@ jobs:
       - name: Instalar dependencias
         run: npm install
 
-      - name: Crear proyecto Android si hace falta
+      - name: Preparar Android
         run: |
           if [ ! -d android ]; then
             npx cap add android
           fi
 
-      - name: Sincronizar archivos móviles
+      - name: Sincronizar Capacitor
         run: npx cap sync android
 
-      - name: Compilar APK de prueba
+      - name: Compilar APK
         working-directory: android
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Publicar APK para descargar
+      - name: Guardar APK
         uses: actions/upload-artifact@v4
         with:
           name: ITMA-Academy-debug-APK
