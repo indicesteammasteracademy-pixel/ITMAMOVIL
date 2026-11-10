@@ -1,0 +1,45 @@
+name: Sincronizar contenido web con ITMA móvil
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-web-to-mobile
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio móvil
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Descargar versión web
+        run: |
+          git clone --depth 1 https://github.com/indicesteammasteracademy-pixel/ClasesITMA2.git /tmp/itma-web
+
+      - name: Sincronizar páginas compartidas
+        run: |
+          set -e
+          cp "/tmp/itma-web/clases2026.html" "www/clases2026.html"
+          cp "/tmp/itma-web/clases (1).html" "www/clases (1).html"
+          cp "/tmp/itma-web/clases (5).html" "www/clases (5).html"
+
+      - name: Guardar cambios si existen
+        run: |
+          if git diff --quiet -- www/; then
+            echo "No hay cambios compartidos nuevos."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "www/clases2026.html" "www/clases (1).html" "www/clases (5).html"
+          git commit -m "Sincronizar páginas compartidas desde ClasesITMA2"
+          git push
