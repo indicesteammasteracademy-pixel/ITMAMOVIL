@@ -25,12 +25,13 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/indicesteammasteracademy-pixel/ClasesITMA2.git /tmp/itma-web
 
-      - name: Sincronizar páginas compartidas
+      - name: Sincronizar páginas y estilos compartidos
         run: |
           set -e
           cp "/tmp/itma-web/clases2026.html" "www/clases2026.html"
           cp "/tmp/itma-web/clases (1).html" "www/clases (1).html"
           cp "/tmp/itma-web/clases (5).html" "www/clases (5).html"
+          cp "/tmp/itma-web/styles.css" "www/styles.css"
 
       - name: Guardar cambios si existen
         run: |
@@ -40,6 +41,6 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "www/clases2026.html" "www/clases (1).html" "www/clases (5).html"
-          git commit -m "Sincronizar páginas compartidas desde ClasesITMA2"
+          git add "www/clases2026.html" "www/clases (1).html" "www/clases (5).html" "www/styles.css"
+          git commit -m "Sincronizar páginas y estilos web con ITMA móvil"
           git push
