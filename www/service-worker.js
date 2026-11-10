@@ -1,4 +1,4 @@
-const CACHE_NAME = "itma-academy-shell-v2";
+const CACHE_NAME = "itma-academy-shell-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -8,7 +8,7 @@ const APP_SHELL = [
   "./mobile-mode.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
-  "./icons/icon-512.png"
+  "./icons/icon-512.png",\n  "./icons/apple-touch-icon.png"
 ];
 
 self.addEventListener("install", event => {
