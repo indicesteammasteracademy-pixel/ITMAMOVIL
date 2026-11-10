@@ -4,6 +4,8 @@
   "webDir": "www",
   "bundledWebRuntime": false,
   "server": {
+    "url": "https://indicesteammasteracademy-pixel.github.io/ClasesITMA2/",
+    "cleartext": false,
     "androidScheme": "https"
   }
 }
