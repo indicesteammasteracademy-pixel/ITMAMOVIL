@@ -56,22 +56,17 @@ jobs:
             npx cap add android
           fi
 
-      - name: Preparar logo oficial para iconos nativos
+      - name: Preparar icono oficial de la web para Android
         run: |
           set -e
           mkdir -p resources
-          curl -fL "https://raw.githubusercontent.com/indicesteammasteracademy-pixel/ClasesITMA2/main/ITMA_ACADEMY.jpg" -o /tmp/itma-logo.jpg
           python -m pip install --quiet Pillow
           python - <<'PY'
           from PIL import Image
-          source = Image.open("/tmp/itma-logo.jpg").convert("RGBA")
-          source.thumbnail((900, 900), Image.Resampling.LANCZOS)
-          canvas = Image.new("RGBA", (1024, 1024), (255, 255, 255, 0))
-          x = (1024 - source.width) // 2
-          y = (1024 - source.height) // 2
-          canvas.alpha_composite(source, (x, y))
-          canvas.save("resources/icon.png")
-          print("Logo preparado en resources/icon.png:", source.size)
+          source = Image.open("www/icons/icon-512.png").convert("RGBA")
+          source = source.resize((1024, 1024), Image.Resampling.LANCZOS)
+          source.save("resources/icon.png")
+          print("Icono de la PWA aplicado a Android:", source.size)
           PY
           npm install --no-save @capacitor/assets
           npx capacitor-assets generate --android
