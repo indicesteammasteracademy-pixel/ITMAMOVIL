@@ -12,7 +12,6 @@ permissions:
 
 jobs:
   build:
-    # No publicar en Drive desde pull requests: los secretos no están disponibles allí.
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
 
@@ -37,15 +36,10 @@ jobs:
           echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
           echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
-
           set +o pipefail
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses
           set -o pipefail
-
-          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
-            "platform-tools" \
-            "platforms;android-35" \
-            "build-tools;35.0.0"
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Instalar dependencias
         run: npm install
@@ -56,17 +50,17 @@ jobs:
             npx cap add android
           fi
 
-      - name: Preparar icono oficial de la web para Android
+      - name: Preparar logo oficial ITMA para Android
         run: |
           set -e
           mkdir -p resources
           python -m pip install --quiet Pillow
           python - <<'PY'
-          from PIL import Image
-          source = Image.open("www/icons/icon-512.png").convert("RGBA")
-          source = source.resize((1024, 1024), Image.Resampling.LANCZOS)
-          source.save("resources/icon.png")
-          print("Icono de la PWA aplicado a Android:", source.size)
+          from PIL import Image, ImageOps
+          source = Image.open("www/icons/ITMA LOGO.jpeg").convert("RGB")
+          source = ImageOps.fit(source, (1024, 1024), method=Image.Resampling.LANCZOS, centering=(0.5, 0.5))
+          source.save("resources/icon.png", format="PNG")
+          print("Logo oficial preparado para Android:", source.size)
           PY
           npm install --no-save @capacitor/assets
           npx capacitor-assets generate --android
@@ -95,55 +89,18 @@ jobs:
           GOOGLE_DRIVE_UPLOAD_TOKEN: ${{ secrets.GOOGLE_DRIVE_UPLOAD_TOKEN }}
         run: |
           python - <<'PY'
-          import base64
-          import json
-          import os
-          import urllib.request
-
+          import base64, json, os, urllib.request
           url = os.environ.get("GOOGLE_DRIVE_UPLOAD_URL", "").strip()
           token = os.environ.get("GOOGLE_DRIVE_UPLOAD_TOKEN", "").strip()
-
           if not url or not token:
-              raise SystemExit(
-                  "Faltan los secretos GOOGLE_DRIVE_UPLOAD_URL y/o "
-                  "GOOGLE_DRIVE_UPLOAD_TOKEN en Settings > Secrets and variables > Actions."
-              )
-
-          apk_path = "android/app/build/outputs/apk/debug/app-debug.apk"
-          with open(apk_path, "rb") as apk:
+              raise SystemExit("Faltan GOOGLE_DRIVE_UPLOAD_URL y/o GOOGLE_DRIVE_UPLOAD_TOKEN.")
+          with open("android/app/build/outputs/apk/debug/app-debug.apk", "rb") as apk:
               encoded_apk = base64.b64encode(apk.read()).decode("ascii")
-
-          payload = json.dumps({
-              "token": token,
-              "apkBase64": encoded_apk
-          }).encode("utf-8")
-
-          request = urllib.request.Request(
-              url,
-              data=payload,
-              headers={"Content-Type": "application/json"},
-              method="POST"
-          )
-
-          try:
-              with urllib.request.urlopen(request, timeout=180) as response:
-                  result_text = response.read().decode("utf-8")
-          except Exception as error:
-              raise SystemExit(f"No se pudo enviar el APK a Google Drive: {error}")
-
-          try:
-              result = json.loads(result_text)
-          except json.JSONDecodeError:
-              raise SystemExit(
-                  "Google Apps Script no devolvió JSON. Revisa que la implementación "
-                  "web esté activa y permita el acceso configurado."
-              )
-
+          payload = json.dumps({"token": token, "apkBase64": encoded_apk}).encode("utf-8")
+          request = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"}, method="POST")
+          with urllib.request.urlopen(request, timeout=180) as response:
+              result = json.loads(response.read().decode("utf-8"))
           if not result.get("success"):
-              raise SystemExit(
-                  "Google Apps Script rechazó la subida: "
-                  + str(result.get("error", "error desconocido"))
-              )
-
+              raise SystemExit("Google Drive rechazó la subida: " + str(result.get("error", "error desconocido")))
           print("APK publicado correctamente en Google Drive: " + result.get("fileName", ""))
           PY
