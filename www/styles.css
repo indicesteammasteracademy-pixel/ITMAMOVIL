@@ -71,7 +71,7 @@
   .login::after { content:""; position:absolute; inset:0; background:linear-gradient(to top, rgba(2,5,12,.92) 0%, rgba(2,5,12,.35) 45%, rgba(2,5,12,0) 100%); }
   @keyframes zoom { from { transform:scale(1); } to { transform:scale(1.09); } }
 
-  .login-box { position:relative; z-index:1; width:min(860px,100%); margin-bottom:max(14px,3vh); padding:24px 26px 18px; border-radius:22px; background:rgba(6,12,28,.62); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(34,199,240,.35); animation:subir .9s cubic-bezier(.2,.8,.2,1) both, brillo 4s ease-in-out infinite; }
+  .login-box { position:relative; z-index:1; width:min(800px,100%); margin-bottom:max(14px,3vh); padding:24px 26px 18px; border-radius:22px; background:rgba(6,12,28,.62); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(34,199,240,.35); animation:subir .9s cubic-bezier(.2,.8,.2,1) both, brillo 4s ease-in-out infinite; }
   @keyframes subir { from { opacity:0; transform:translateY(40px) scale(.97); } to { opacity:1; transform:none; } }
   @keyframes brillo { 0%,100% { box-shadow:0 0 28px rgba(34,199,240,.14), 0 20px 60px rgba(0,0,0,.55); } 50% { box-shadow:0 0 52px rgba(34,199,240,.34), 0 20px 60px rgba(0,0,0,.55); } }
   .login-box.shake { animation:sacudir .45s; }
@@ -217,8 +217,17 @@
   .pendrow { border-top:1px solid var(--line); padding:10px 0; font-size:.92rem; display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; align-items:center; }
   @media (max-width:700px) { .actrow { grid-template-columns:1fr 1fr; } .acthead { display:none; } }
 
+  /* ---------- Foto de perfil ---------- */
+  .avatar { width:30px; height:30px; border-radius:50%; background:var(--accent); color:var(--onacc); display:inline-grid; place-items:center; font-weight:700; font-size:.9rem; overflow:hidden; flex:none; }
+  .avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+  .avatar.grande { width:84px; height:84px; font-size:2rem; }
+  #quien { display:inline-flex; align-items:center; gap:8px; }
+  #quien .qn { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:150px; }
+  .pfoto { display:flex; gap:16px; align-items:center; }
+  .pfbtn { display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
 
-/* ---------- Foto de perfil del alumno ---------- */
+/* Ajustes exclusivos de ITMA móvil */
+.login-box { width:min(860px,100%); }
 .menu-avatar { overflow:hidden; }
 .menu-avatar img { width:100%; height:100%; display:block; object-fit:cover; border-radius:50%; }
 .pfoto { display:flex; align-items:center; gap:14px; margin:4px 0 8px; }
