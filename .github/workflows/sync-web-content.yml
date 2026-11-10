@@ -3,7 +3,8 @@ name: Sincronizar contenido web con ITMA móvil
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
       - ".github/workflows/sync-web-content.yml"
   schedule:
@@ -26,8 +27,7 @@ jobs:
           ref: main
 
       - name: Descargar versión web
-        run: |
-          git clone --depth 1 https://github.com/indicesteammasteracademy-pixel/ClasesITMA2.git /tmp/itma-web
+        run: git clone --depth 1 https://github.com/indicesteammasteracademy-pixel/ClasesITMA2.git /tmp/itma-web
 
       - name: Sincronizar páginas y estilos compartidos
         run: |
@@ -38,7 +38,7 @@ jobs:
           cp "/tmp/itma-web/styles.css" "www/styles.css"
           cat >> "www/styles.css" <<'MOBILE_CSS'
 
-          /* ---------- Ajustes exclusivos de ITMA móvil: conservar al sincronizar ---------- */
+          /* Ajustes exclusivos de ITMA móvil */
           .login-box { width:min(860px,100%); }
           .menu-avatar { overflow:hidden; }
           .menu-avatar img { width:100%; height:100%; display:block; object-fit:cover; border-radius:50%; }
@@ -50,93 +50,7 @@ jobs:
           .pfoto-acciones .btn { font-size:.85rem; padding:8px 10px; }
           @media (max-width:420px) { .pfoto { align-items:flex-start; } .pfoto-acciones { flex-direction:column; } }
           MOBILE_CSS
-          sed -i 's/styles\.css?v=[0-9]*/styles.css?v=20/' www/index.html
-
-      - name: Sincronizar JavaScript compartido y adaptar funciones móviles
-        run: |
-          set -e
-          cp /tmp/itma-web/app.js www/app.js
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path("www/app.js")
-          s = p.read_text(encoding="utf-8")
-
-          anchor = "  function actualizarQuien() {"
-          mobile_avatar = """  function actualizarAvatarMenu() {
-            const avatar = $("menuAvatar");
-            if (!avatar) return;
-            avatar.replaceChildren();
-            if (alumno && alumno.foto) {
-              const img = document.createElement("img");
-              img.src = alumno.foto;
-              img.alt = "Foto de perfil";
-              avatar.appendChild(img);
-            } else {
-              avatar.textContent = "👤";
-            }
-          }
-
-"""
-          assert s.count(anchor) == 1, "No se encontró el punto de integración del menú móvil."
-          s = s.replace(anchor, mobile_avatar + anchor, 1)
-
-          needle = '    q.style.display = nombre ? "" : "none";'
-          assert s.count(needle) == 1, "No se encontró la actualización del perfil."
-          s = s.replace(needle, needle + "\n    actualizarAvatarMenu();", 1)
-
-          old_avatar = """  function pintarAvatarPerfil() {
-            const a = $("pf-avatar");
-            a.innerHTML = "";
-            const foto = pfFoto !== undefined ? pfFoto : (alumno.foto || "");
-            if (foto) {
-              const i = document.createElement("img");
-              i.src = foto;
-              i.alt = "";
-              a.appendChild(i);
-            } else {
-              a.textContent = ((alumno.nombre || alumno.email).trim().charAt(0) || "?").toUpperCase();
-            }
-          }"""
-          new_avatar = """  function pintarAvatarPerfil() {
-            const foto = pfFoto !== undefined ? pfFoto : (alumno.foto || "");
-            const a = $("pf-avatar");
-            if (a) {
-              a.innerHTML = "";
-              if (foto) {
-                const i = document.createElement("img");
-                i.src = foto;
-                i.alt = "";
-                a.appendChild(i);
-              } else {
-                a.textContent = ((alumno.nombre || alumno.email).trim().charAt(0) || "?").toUpperCase();
-              }
-              return;
-            }
-            const img = $("pf-preview");
-            const placeholder = $("pf-placeholder");
-            if (img && placeholder) {
-              if (foto) {
-                img.src = foto;
-                img.hidden = false;
-                placeholder.hidden = true;
-              } else {
-                img.removeAttribute("src");
-                img.hidden = true;
-                placeholder.hidden = false;
-              }
-            }
-          }"""
-          assert s.count(old_avatar) == 1, "No se encontró el bloque de foto de perfil esperado."
-          s = s.replace(old_avatar, new_avatar, 1)
-
-          admin_anchor = '  $("admin").onclick = async () => {'
-          assert s.count(admin_anchor) == 1, "No se encontró el control de acceso de profesor."
-          s = s.replace(admin_anchor, admin_anchor + '\n    if (window.ITMA_MOBILE_APP) return;', 1)
-
-          p.write_text(s, encoding="utf-8")
-          print("JavaScript web integrado con compatibilidad móvil.")
-          PY
-          sed -i 's/app\.js?v=[0-9]*/app.js?v=21/' www/index.html
+          sed -i 's/styles\.css?v=[0-9]*/styles.css?v=22/' www/index.html
 
       - name: Guardar cambios si existen
         run: |
@@ -146,6 +60,6 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "www/clases2026.html" "www/clases (1).html" "www/clases (5).html" "www/styles.css" "www/app.js" "www/index.html"
+          git add "www/clases2026.html" "www/clases (1).html" "www/clases (5).html" "www/styles.css" "www/index.html"
           git commit -m "Sincronizar páginas y estilos web con ITMA móvil"
           git push
