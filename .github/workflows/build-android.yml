@@ -3,7 +3,7 @@ name: Build ITMA Academy Android APK
 on:
   workflow_dispatch:
   push:
-    branches: [main, master, feature/foto-perfil-ios]
+    branches: [main, master, feature/foto-perfil-ios, feature/actualizaciones-automaticas]
   pull_request:
     branches: [main, master]
 
@@ -74,6 +74,7 @@ jobs:
           retention-days: 14
 
       - name: Publicar APK en Google Drive
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         env:
           GOOGLE_DRIVE_UPLOAD_URL: ${{ secrets.GOOGLE_DRIVE_UPLOAD_URL }}
           GOOGLE_DRIVE_UPLOAD_TOKEN: ${{ secrets.GOOGLE_DRIVE_UPLOAD_TOKEN }}
