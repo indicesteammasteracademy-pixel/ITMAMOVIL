@@ -70,7 +70,7 @@ try {
   </div>
 
   <div class="menu-perfil">
-    <div class="menu-avatar">👤</div>
+    <div class="menu-avatar" id="menuAvatar">👤</div>
     <div class="menu-datos">
       <strong id="menuNombre">Estudiante</strong>
       <small id="menuCorreo">Tu cuenta ITMA</small>
@@ -213,6 +213,17 @@ try {
   <div class="pbox">
     <h2>Mis datos</h2>
     <p class="mail">Correo: <b id="pf-email"></b> <small>(no se puede cambiar)</small></p>
+    <div class="pfoto">
+      <div class="pf-avatar">
+        <img id="pf-preview" alt="Vista previa de la foto" hidden>
+        <span id="pf-placeholder">👤</span>
+      </div>
+      <div class="pfoto-acciones">
+        <button type="button" class="btn" id="pf-cambiar">Cambiar foto</button>
+        <button type="button" class="btn" id="pf-quitar">Quitar foto</button>
+        <input type="file" id="pf-file" accept="image/*" hidden>
+      </div>
+    </div>
     <input type="text" id="pf-nombre" placeholder="Nombre" autocomplete="given-name">
     <input type="text" id="pf-apellido" placeholder="Apellido" autocomplete="family-name">
     <input type="password" id="pf-code" placeholder="Nuevo código (déjalo vacío para no cambiarlo)" autocomplete="new-password">
@@ -239,7 +250,7 @@ try {
 </div>
 
 <script>window.ITMA_MOBILE_APP = true;</script>
-<script src="app.js?v=17"></script>
+<script src="app.js?v=18"></script>
 <script src="mobile-mode.js"></script>
 
 <script>
