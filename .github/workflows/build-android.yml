@@ -4,7 +4,7 @@ name: Build ITMA Academy Android APK
 on:
   workflow_dispatch:
   push:
-    branches: [main, master]
+    branches: [main, master, feature/foto-perfil-ios]
   pull_request:
     branches: [main, master]
 
