@@ -1,4 +1,4 @@
-const CACHE_NAME = "itma-academy-shell-v1";
+const CACHE_NAME = "itma-academy-shell-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -27,11 +27,11 @@ self.addEventListener("fetch", event => {
   const request = event.request;
   const url = new URL(request.url);
 
-  // Never cache Apps Script, Drive, video, PDF, login, or POST requests.
+  // Do not intercept APIs, Drive, media, or non-GET requests.
   if (request.method !== "GET" || url.origin !== self.location.origin) return;
 
   event.respondWith(
-    fetch(request).then(response => {
+    fetch(new Request(request, { cache: "no-store" })).then(response => {
       if (response && response.ok) {
         const copy = response.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
