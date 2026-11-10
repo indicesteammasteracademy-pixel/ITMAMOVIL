@@ -216,3 +216,15 @@
   .tagin { font-size:.7rem; background:#e5484d; color:#fff; padding:2px 7px; border-radius:999px; margin-left:6px; }
   .pendrow { border-top:1px solid var(--line); padding:10px 0; font-size:.92rem; display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; align-items:center; }
   @media (max-width:700px) { .actrow { grid-template-columns:1fr 1fr; } .acthead { display:none; } }
+
+
+/* ---------- Foto de perfil del alumno ---------- */
+.menu-avatar { overflow:hidden; }
+.menu-avatar img { width:100%; height:100%; display:block; object-fit:cover; border-radius:50%; }
+.pfoto { display:flex; align-items:center; gap:14px; margin:4px 0 8px; }
+.pf-avatar { width:88px; height:88px; flex:0 0 88px; border-radius:50%; overflow:hidden; display:grid; place-items:center; background:rgba(34,199,240,.14); border:2px solid var(--accent); color:var(--text); font-size:2rem; }
+.pf-avatar img { width:100%; height:100%; object-fit:cover; }
+.pf-avatar img[hidden], .pf-avatar span[hidden] { display:none; }
+.pfoto-acciones { display:flex; flex-wrap:wrap; gap:8px; }
+.pfoto-acciones .btn { font-size:.85rem; padding:8px 10px; }
+@media (max-width:420px) { .pfoto { align-items:flex-start; } .pfoto-acciones { flex-direction:column; } }
