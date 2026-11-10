@@ -36,6 +36,7 @@ jobs:
           cp "/tmp/itma-web/clases (1).html" "www/clases (1).html"
           cp "/tmp/itma-web/clases (5).html" "www/clases (5).html"
           cp "/tmp/itma-web/styles.css" "www/styles.css"
+          cp "/tmp/itma-web/ITMA_FONDO_TRADING.png" "www/ITMA_FONDO_TRADING.png"
           cat >> "www/styles.css" <<'MOBILE_CSS'
 
           /* Ajustes exclusivos de ITMA móvil */
