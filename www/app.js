@@ -736,7 +736,7 @@
       alumno.nombre = r.nombre;
       if (pfFoto !== undefined) alumno.foto = pfFoto;
       if (c1) alumno.code = c1;
-      try { localStorage.setItem("itma_alumno", JSON.stringify(alumno)); } catch (e) {}
+      try { localStorage.setItem("itma_alumno", JSON.stringify({ email: alumno.email, code: alumno.code, nombre: alumno.nombre })); } catch (e) {}
       actualizarQuien();
       msg.textContent = "¡Datos actualizados!";
       setTimeout(cerrarPerfil, 900);
