@@ -1,4 +1,3 @@
-
 name: Build ITMA Academy Android APK
 
 on:
@@ -13,6 +12,8 @@ permissions:
 
 jobs:
   build:
+    # No publicar en Drive desde pull requests: los secretos no están disponibles allí.
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
 
     steps:
@@ -64,10 +65,69 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Guardar APK
+      - name: Guardar APK en GitHub Actions
         uses: actions/upload-artifact@v4
         with:
           name: ITMA-Academy-debug-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
+
+      - name: Publicar APK en Google Drive
+        env:
+          GOOGLE_DRIVE_UPLOAD_URL: ${{ secrets.GOOGLE_DRIVE_UPLOAD_URL }}
+          GOOGLE_DRIVE_UPLOAD_TOKEN: ${{ secrets.GOOGLE_DRIVE_UPLOAD_TOKEN }}
+        run: |
+          python - <<'PY'
+          import base64
+          import json
+          import os
+          import urllib.request
+
+          url = os.environ.get("GOOGLE_DRIVE_UPLOAD_URL", "").strip()
+          token = os.environ.get("GOOGLE_DRIVE_UPLOAD_TOKEN", "").strip()
+
+          if not url or not token:
+              raise SystemExit(
+                  "Faltan los secretos GOOGLE_DRIVE_UPLOAD_URL y/o "
+                  "GOOGLE_DRIVE_UPLOAD_TOKEN en Settings > Secrets and variables > Actions."
+              )
+
+          apk_path = "android/app/build/outputs/apk/debug/app-debug.apk"
+          with open(apk_path, "rb") as apk:
+              encoded_apk = base64.b64encode(apk.read()).decode("ascii")
+
+          payload = json.dumps({
+              "token": token,
+              "apkBase64": encoded_apk
+          }).encode("utf-8")
+
+          request = urllib.request.Request(
+              url,
+              data=payload,
+              headers={"Content-Type": "application/json"},
+              method="POST"
+          )
+
+          try:
+              with urllib.request.urlopen(request, timeout=180) as response:
+                  result_text = response.read().decode("utf-8")
+          except Exception as error:
+              raise SystemExit(f"No se pudo enviar el APK a Google Drive: {error}")
+
+          try:
+              result = json.loads(result_text)
+          except json.JSONDecodeError:
+              raise SystemExit(
+                  "Google Apps Script no devolvió JSON. Revisa que la implementación "
+                  "web esté activa y permita el acceso configurado."
+              )
+
+          if not result.get("success"):
+              raise SystemExit(
+                  "Google Apps Script rechazó la subida: "
+                  + str(result.get("error", "error desconocido"))
+              )
+
+          print("APK publicado correctamente en Google Drive: " + result.get("fileName", ""))
+          PY
