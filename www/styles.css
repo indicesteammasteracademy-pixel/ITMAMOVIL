@@ -228,3 +228,56 @@
 .pfoto-acciones { display:flex; flex-wrap:wrap; gap:8px; }
 .pfoto-acciones .btn { font-size:.85rem; padding:8px 10px; }
 @media (max-width:420px) { .pfoto { align-items:flex-start; } .pfoto-acciones { flex-direction:column; } }
+
+
+/* ---------- Fondo nítido de inicio de sesión ITMA ---------- */
+/* Coloca la nueva imagen en www/ con el nombre ITMA_FONDO_TRADING.png */
+.login::before {
+  inset: 0;
+  background-image: url("./ITMA_FONDO_TRADING.png");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  transform: none;
+  animation: none;
+  filter: none;
+}
+
+/* Oscurecimiento ligero para mantener legible el formulario */
+.login::after {
+  background: linear-gradient(
+    180deg,
+    rgba(2, 5, 12, .08) 0%,
+    rgba(2, 5, 12, .18) 48%,
+    rgba(2, 5, 12, .78) 100%
+  );
+}
+
+/* En móviles se conserva el fondo completo, sin recortarlo a media pantalla */
+@media (max-width: 760px) {
+  .login::before {
+    inset: 0;
+    height: 100%;
+    background-position: center center;
+    background-size: cover;
+  }
+
+  .login::after {
+    background: linear-gradient(
+      180deg,
+      rgba(2, 5, 12, .12) 0%,
+      rgba(2, 5, 12, .30) 42%,
+      rgba(2, 5, 12, .88) 100%
+    );
+  }
+
+  .login {
+    padding: 16px;
+    align-items: end;
+  }
+
+  .login-box {
+    width: min(560px, 100%);
+    margin-bottom: max(10px, 2vh);
+  }
+}
