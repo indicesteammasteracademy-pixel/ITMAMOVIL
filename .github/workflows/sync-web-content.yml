@@ -2,6 +2,10 @@ name: Sincronizar contenido web con ITMA móvil
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/sync-web-content.yml"
   schedule:
     - cron: "*/15 * * * *"
 
@@ -142,6 +146,6 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "www/clases2026.html" "www/clases (1).html" "www/clases (5).html" "www/styles.css" "www/index.html"
+          git add "www/clases2026.html" "www/clases (1).html" "www/clases (5).html" "www/styles.css" "www/app.js" "www/index.html"
           git commit -m "Sincronizar páginas y estilos web con ITMA móvil"
           git push
