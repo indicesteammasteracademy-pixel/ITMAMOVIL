@@ -14,7 +14,8 @@
   const $ = id => document.getElementById(id);
   let clases = [];
   let clave = "";   // solo en memoria; el servidor es quien verifica la clave
-  let alumno = null; // {email, code} del alumno que entró
+  let alumno = null; // {email, code, nombre, foto} del alumno que entró
+  let pfFoto; // undefined=no cambiar; ""=quitar; data URL=actualizar
   let adminRol = false; // el alumno que entró es administrador
   let vistos = new Set(); // IDs de las clases que el alumno ya vio
   let modulos = ["Clases"]; // nombres de los módulos (carpetas de Drive)
@@ -59,6 +60,18 @@
     l.classList.add("saliendo");
     tOcultar = setTimeout(() => l.classList.remove("show", "saliendo"), 450);
   }
+  function actualizarAvatarMenu() {
+    const avatar = $("menuAvatar");
+    if (!avatar) return;
+    avatar.replaceChildren();
+    if (alumno && alumno.foto) {
+      const img = document.createElement("img");
+      img.src = alumno.foto;
+      img.alt = "Foto de perfil";
+      avatar.appendChild(img);
+    } else avatar.textContent = "👤";
+  }
+
   function actualizarQuien() {
     const q = $("quien");
     let nombre = "";
@@ -68,6 +81,7 @@
     q.textContent = nombre ? "👤 " + nombre + (clave ? "" : "  ✎") : "";
     q.disabled = !!clave;
     q.style.display = nombre ? "" : "none";
+    actualizarAvatarMenu();
   }
 
   function cerrarSesion(msg) {
@@ -105,7 +119,8 @@
       vistos = new Set(Array.isArray(r) ? [] : (r.vistos || []));
       if (!clave && alumno && !Array.isArray(r) && r.nombre !== undefined) {
         alumno.nombre = r.nombre || "";
-        try { localStorage.setItem("itma_alumno", JSON.stringify(alumno)); } catch (e) {}
+        if (r.foto !== undefined) alumno.foto = r.foto || "";
+        try { localStorage.setItem("itma_alumno", JSON.stringify({ email: alumno.email, code: alumno.code, nombre: alumno.nombre })); } catch (e) {}
       }
       if (!Array.isArray(r) && r.admin !== undefined) adminRol = !!r.admin;
       modulos = (!Array.isArray(r) && r.modulos && r.modulos.length) ? r.modulos : ["Clases"];
@@ -153,7 +168,7 @@
     $("lok").disabled = false;
     $("lok").classList.remove("cargando");
     if (alumno) {
-      try { localStorage.setItem("itma_alumno", JSON.stringify(alumno)); } catch (e) {}
+      try { localStorage.setItem("itma_alumno", JSON.stringify({ email: alumno.email, code: alumno.code, nombre: alumno.nombre })); } catch (e) {}
     }
     if (alumno) $("lcode").value = "";
   };
@@ -629,6 +644,8 @@
   // ---------- Mis datos (el alumno cambia su nombre y su código; el correo no) ----------
   function abrirPerfil() {
     if (clave || !alumno) return;
+    pfFoto = undefined;
+    pintarFotoPreview(alumno.foto || "");
     const partes = (alumno.nombre || "").split(" ");
     $("pf-nombre").value = partes.shift() || "";
     $("pf-apellido").value = partes.join(" ");
@@ -639,6 +656,62 @@
     $("perfil").classList.add("open");
   }
   function cerrarPerfil() { $("perfil").classList.remove("open"); }
+
+  function pintarFotoPreview(src) {
+    const img = $("pf-preview");
+    const placeholder = $("pf-placeholder");
+    if (!img || !placeholder) return;
+    if (src) { img.src = src; img.hidden = false; placeholder.hidden = true; }
+    else { img.removeAttribute("src"); img.hidden = true; placeholder.hidden = false; }
+  }
+
+  async function reducirFotoPerfil(file) {
+    if (!file || !file.type || !file.type.startsWith("image/")) throw new Error("Selecciona una imagen válida.");
+    const data = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("No se pudo leer la imagen."));
+      reader.readAsDataURL(file);
+    });
+    const img = await new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(new Error("No se pudo abrir la imagen."));
+      image.src = data;
+    });
+    const lado = Math.min(img.naturalWidth, img.naturalHeight);
+    const sx = (img.naturalWidth - lado) / 2;
+    const sy = (img.naturalHeight - lado) / 2;
+    const canvas = document.createElement("canvas");
+    canvas.width = 128; canvas.height = 128;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("No se pudo procesar la imagen.");
+    ctx.drawImage(img, sx, sy, lado, lado, 0, 0, 128, 128);
+    let result = canvas.toDataURL("image/jpeg", 0.82);
+    if (result.length > 60000) result = canvas.toDataURL("image/jpeg", 0.65);
+    if (result.length > 60000) throw new Error("La foto pesa demasiado. Prueba con otra imagen.");
+    return result;
+  }
+
+  $("pf-cambiar").onclick = () => $("pf-file").click();
+  $("pf-quitar").onclick = () => {
+    pfFoto = "";
+    pintarFotoPreview("");
+    $("pf-msg").textContent = "La foto se quitará al guardar.";
+  };
+  $("pf-file").onchange = async () => {
+    const file = $("pf-file").files && $("pf-file").files[0];
+    if (!file) return;
+    $("pf-msg").textContent = "Preparando foto…";
+    try {
+      pfFoto = await reducirFotoPerfil(file);
+      pintarFotoPreview(pfFoto);
+      $("pf-msg").textContent = "Foto lista. Pulsa Guardar para aplicarla.";
+    } catch (e) {
+      pfFoto = undefined;
+      $("pf-msg").textContent = e.message || "No se pudo procesar la foto.";
+    } finally { $("pf-file").value = ""; }
+  };
   $("quien").onclick = abrirPerfil;
   $("pf-no").onclick = cerrarPerfil;
   $("perfil").addEventListener("click", e => { if (e.target === $("perfil")) cerrarPerfil(); });
@@ -656,9 +729,12 @@
     $("pf-ok").disabled = true;
     msg.textContent = "Guardando…";
     try {
-      const r = await post({ action: "perfilEdit", email: alumno.email, code: alumno.code, nombre, apellido, nuevoCode: c1 });
+      const datosPerfil = { action: "perfilEdit", email: alumno.email, code: alumno.code, nombre, apellido, nuevoCode: c1 };
+      if (pfFoto !== undefined) datosPerfil.foto = pfFoto;
+      const r = await post(datosPerfil);
       if (r.error) { msg.textContent = r.error; return; }
       alumno.nombre = r.nombre;
+      if (pfFoto !== undefined) alumno.foto = pfFoto;
       if (c1) alumno.code = c1;
       try { localStorage.setItem("itma_alumno", JSON.stringify(alumno)); } catch (e) {}
       actualizarQuien();
