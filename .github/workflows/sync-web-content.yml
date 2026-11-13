@@ -51,7 +51,7 @@ jobs:
           .pfoto-acciones .btn { font-size:.85rem; padding:8px 10px; }
           @media (max-width:420px) { .pfoto { align-items:flex-start; } .pfoto-acciones { flex-direction:column; } }
           MOBILE_CSS
-          sed -i 's/styles\.css?v=[0-9]*/styles.css?v=23/' www/index.html
+          sed -i 's/styles\.css?v=[0-9]*/styles.css?v=24/' www/index.html
 
       - name: Guardar cambios si existen
         run: |
