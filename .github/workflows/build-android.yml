@@ -3,7 +3,7 @@ name: Build ITMA Academy Android APK
 on:
   workflow_dispatch:
   push:
-    branches: [main, master, feature/foto-perfil-ios, feature/actualizaciones-automaticas]
+    branches: [main, master, feature/foto-perfil-ios, feature/actualizaciones-automaticas, pruebas/sincronizacion-web-movil]
   pull_request:
     branches: [main, master]
 
@@ -68,17 +68,56 @@ jobs:
       - name: Sincronizar Capacitor
         run: npx cap sync android
 
-      - name: Compilar APK
+      - name: Preparar firma permanente de ITMA
+        env:
+          ITMA_KEYSTORE_BASE64: ${{ secrets.ITMA_KEYSTORE_BASE64 }}
+          ITMA_KEYSTORE_PASSWORD: ${{ secrets.ITMA_KEYSTORE_PASSWORD }}
+          ITMA_KEY_ALIAS: ${{ secrets.ITMA_KEY_ALIAS }}
+          ITMA_KEY_PASSWORD: ${{ secrets.ITMA_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          test -n "$ITMA_KEYSTORE_BASE64"
+          test -n "$ITMA_KEYSTORE_PASSWORD"
+          test -n "$ITMA_KEY_ALIAS"
+          test -n "$ITMA_KEY_PASSWORD"
+          echo "$ITMA_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/itma-release-key.jks"
+          test -s "$RUNNER_TEMP/itma-release-key.jks"
+          keytool -list -keystore "$RUNNER_TEMP/itma-release-key.jks" -storepass "$ITMA_KEYSTORE_PASSWORD" -alias "$ITMA_KEY_ALIAS" >/dev/null
+          cat >> android/app/build.gradle <<'GRADLE'
+
+          // Firma permanente de ITMA Academy: credenciales suministradas por GitHub Secrets.
+          android {
+              signingConfigs {
+                  release {
+                      storeFile file(System.getenv("ITMA_KEYSTORE_FILE"))
+                      storePassword System.getenv("ITMA_KEYSTORE_PASSWORD")
+                      keyAlias System.getenv("ITMA_KEY_ALIAS")
+                      keyPassword System.getenv("ITMA_KEY_PASSWORD")
+                  }
+              }
+              buildTypes {
+                  release {
+                      signingConfig signingConfigs.release
+                  }
+              }
+          }
+          GRADLE
+          echo "ITMA_KEYSTORE_FILE=$RUNNER_TEMP/itma-release-key.jks" >> "$GITHUB_ENV"
+          echo "ITMA_KEYSTORE_PASSWORD=$ITMA_KEYSTORE_PASSWORD" >> "$GITHUB_ENV"
+          echo "ITMA_KEY_ALIAS=$ITMA_KEY_ALIAS" >> "$GITHUB_ENV"
+          echo "ITMA_KEY_PASSWORD=$ITMA_KEY_PASSWORD" >> "$GITHUB_ENV"
+
+      - name: Compilar APK firmado de publicación
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleRelease
 
-      - name: Guardar APK en GitHub Actions
+      - name: Guardar APK firmado en GitHub Actions
         uses: actions/upload-artifact@v4
         with:
-          name: ITMA-Academy-debug-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: ITMA-Academy-release-APK
+          path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 14
 
@@ -94,7 +133,7 @@ jobs:
           token = os.environ.get("GOOGLE_DRIVE_UPLOAD_TOKEN", "").strip()
           if not url or not token:
               raise SystemExit("Faltan GOOGLE_DRIVE_UPLOAD_URL y/o GOOGLE_DRIVE_UPLOAD_TOKEN.")
-          with open("android/app/build/outputs/apk/debug/app-debug.apk", "rb") as apk:
+          with open("android/app/build/outputs/apk/release/app-release.apk", "rb") as apk:
               encoded_apk = base64.b64encode(apk.read()).decode("ascii")
           payload = json.dumps({"token": token, "apkBase64": encoded_apk}).encode("utf-8")
           request = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"}, method="POST")
