@@ -265,19 +265,17 @@
 }
 .lhead { text-align: center; }
 .lhead::before {
-  content: "ITMA";
-  display: grid;
-  place-items: center;
+  content: "";
+  display: block;
   width: 66px;
   height: 66px;
   margin: 0 auto 20px;
-  border: 1px solid rgba(77, 215, 255, .62);
-  border-radius: 20px;
-  color: #dffaff;
-  background: linear-gradient(145deg, rgba(34,199,240,.28), rgba(10,53,94,.56));
-  box-shadow: 0 0 32px rgba(34,199,240,.24), inset 0 1px 0 rgba(255,255,255,.2);
-  font: 800 1.22rem Syne, sans-serif;
-  letter-spacing: .1em;
+  border: 1px solid rgba(77, 215, 255, .72);
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(3, 12, 28, .12), rgba(3, 12, 28, .28)),
+    url("./ITMA_FONDO_TRADING.png") center / cover no-repeat;
+  box-shadow: 0 0 32px rgba(34,199,240,.28), 0 8px 24px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.2);
 }
 .lhead h2 {
   color: #f2f8ff;
@@ -354,6 +352,233 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .login::before, .login-box { animation: none !important; }
+}
+
+
+/* ==========================================================
+   ITMA ACADEMY — MENÚ Y CONTENIDO DINÁMICO
+   Mejora visual compartida: web y app móvil.
+   No modifica autenticación, navegación ni lógica JavaScript.
+   ========================================================== */
+#tabs {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 3px 18px;
+  margin: 0 0 26px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+#tabs .tab {
+  position: relative;
+  isolation: isolate;
+  flex: 0 0 auto;
+  min-height: 46px;
+  padding: 11px 21px;
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line));
+  border-radius: 14px;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--card) 92%, #12345b), var(--card));
+  color: var(--muted);
+  font-weight: 700;
+  letter-spacing: .01em;
+  box-shadow: 0 5px 16px rgba(0,0,0,.12);
+  transition: transform .22s ease, color .22s ease, border-color .22s ease, box-shadow .22s ease, background .22s ease;
+}
+#tabs .tab::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(110deg, transparent 15%, rgba(255,255,255,.12), transparent 75%);
+  opacity: 0;
+  transition: opacity .22s ease;
+}
+#tabs .tab:hover {
+  transform: translateY(-3px);
+  color: var(--text);
+  border-color: var(--accent);
+  box-shadow: 0 9px 24px rgba(34,199,240,.16);
+}
+#tabs .tab:hover::before { opacity: 1; }
+#tabs .tab.activa {
+  color: var(--onacc);
+  border-color: transparent;
+  background: linear-gradient(120deg, var(--accent), #57dcff);
+  box-shadow: 0 7px 24px rgba(34,199,240,.27), inset 0 1px 0 rgba(255,255,255,.35);
+  transform: translateY(-2px);
+}
+#tabs .tab.activa::after {
+  content: "";
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  bottom: -5px;
+  height: 3px;
+  border-radius: 99px;
+  background: #8ceaff;
+  box-shadow: 0 0 12px rgba(34,199,240,.8);
+}
+.modulo {
+  position: relative;
+  padding: 4px 0 8px;
+  animation: itmaModuleIn .48s ease both;
+}
+.modulo h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  border-left: 4px solid var(--accent);
+  border-radius: 0 14px 14px 0;
+  background: linear-gradient(90deg, rgba(34,199,240,.10), transparent 78%);
+  text-shadow: 0 0 20px rgba(34,199,240,.12);
+}
+.grid .card {
+  position: relative;
+  isolation: isolate;
+  border-color: color-mix(in srgb, var(--line) 72%, var(--accent));
+  box-shadow: 0 10px 28px rgba(0,0,0,.13);
+  animation: itmaCardIn .5s cubic-bezier(.2,.75,.25,1) both;
+  transition: transform .28s cubic-bezier(.2,.75,.25,1), border-color .25s ease, box-shadow .28s ease;
+}
+.grid .card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(115deg, transparent 20%, rgba(110,226,255,.09) 48%, transparent 72%);
+  transform: translateX(-115%);
+  transition: transform .65s ease;
+}
+.grid .card:hover {
+  transform: translateY(-7px) scale(1.012);
+  border-color: var(--accent);
+  box-shadow: 0 18px 38px rgba(0,0,0,.25), 0 0 0 1px rgba(34,199,240,.12), 0 0 28px rgba(34,199,240,.12);
+}
+.grid .card:hover::after { transform: translateX(115%); }
+.grid .card .thumb img { transition: transform .55s cubic-bezier(.2,.75,.25,1), filter .35s ease; }
+.grid .card:hover .thumb img { transform: scale(1.055); filter: saturate(1.12); }
+.grid .card .info h3 { transition: color .2s ease; }
+.grid .card:hover .info h3 { color: var(--accent); }
+.tab:focus-visible, .card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+@keyframes itmaCardIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes itmaModuleIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 600px) {
+  #tabs { gap: 8px; padding: 5px 2px 15px; margin-bottom: 20px; }
+  #tabs .tab { min-height: 43px; padding: 10px 16px; border-radius: 12px; font-size: .9rem; }
+  .grid .card:hover { transform: translateY(-3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #tabs .tab, .grid .card, .grid .card::after, .grid .card .thumb img { transition: none !important; }
+  .grid .card, .modulo { animation: none !important; }
+}
+
+
+/* ==========================================================
+   ITMA ACADEMY — REDISEÑO VISIBLE DEL MENÚ PRINCIPAL
+   ========================================================== */
+#home { max-width: 1280px; margin: 0 auto; }
+#tabs {
+  display:flex; flex-wrap:wrap; gap:12px; padding:14px;
+  margin:0 0 30px; border:1px solid rgba(34,199,240,.24);
+  border-radius:20px;
+  background:linear-gradient(135deg,rgba(8,25,49,.96),rgba(5,13,29,.92));
+  box-shadow:0 14px 36px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.05);
+}
+#tabs .tab {
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  min-height:54px; padding:13px 22px; border-radius:14px;
+  border:1px solid rgba(107,153,194,.28);
+  background:linear-gradient(145deg,#132944,#09172b);
+  color:#c5d8ed; font-weight:800; font-size:.96rem; letter-spacing:.025em;
+  box-shadow:0 7px 16px rgba(0,0,0,.24);
+  transition:all .24s ease;
+}
+#tabs .tab::before {
+  content:"✦"; display:grid; place-items:center; width:25px; height:25px;
+  border-radius:8px; color:#62e4ff; background:rgba(34,199,240,.13);
+  font-size:15px;
+}
+#tabs .tab:hover {
+  transform:translateY(-4px); color:#fff; border-color:#35d8ff;
+  background:linear-gradient(135deg,#17466a,#10253e);
+  box-shadow:0 12px 26px rgba(18,178,224,.2);
+}
+#tabs .tab.activa {
+  color:#031522; border-color:#75eaff;
+  background:linear-gradient(115deg,#20b9e7,#79edff);
+  box-shadow:0 8px 25px rgba(34,199,240,.35),inset 0 1px 0 rgba(255,255,255,.6);
+}
+#tabs .tab.activa::before { color:#06324a; background:rgba(255,255,255,.42); }
+.modulo {
+  margin:0 0 42px; padding:0 0 24px;
+  border-bottom:1px solid rgba(34,199,240,.14);
+  animation:itmaMenuEnter .45s ease both;
+}
+.modulo h2 {
+  display:flex; align-items:center; gap:13px;
+  min-height:62px; margin:0 0 22px; padding:13px 20px;
+  border:1px solid rgba(34,199,240,.28); border-left:5px solid #22c7f0;
+  border-radius:14px;
+  background:linear-gradient(100deg,rgba(18,92,128,.34),rgba(8,24,45,.88) 62%,rgba(7,15,30,.7));
+  color:#f1f8ff; font-family:Syne,Inter,sans-serif;
+  font-size:clamp(1.15rem,2.2vw,1.48rem); letter-spacing:.01em;
+  box-shadow:0 10px 28px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.modulo h2::before {
+  content:"🎓"; display:grid; place-items:center; flex:0 0 38px; height:38px;
+  border-radius:11px; background:linear-gradient(145deg,#0b7199,#123c60);
+  font-size:19px; box-shadow:0 0 18px rgba(34,199,240,.22);
+}
+.grid { gap:22px; }
+.grid .card {
+  border:1px solid rgba(69,147,190,.32); border-radius:19px;
+  background:linear-gradient(155deg,#0d1b30,#081221);
+  box-shadow:0 12px 28px rgba(0,0,0,.25);
+  transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease;
+}
+.grid .card:hover {
+  transform:translateY(-8px); border-color:#36d7ff;
+  box-shadow:0 20px 42px rgba(0,0,0,.34),0 0 0 1px rgba(34,199,240,.18),0 0 28px rgba(34,199,240,.15);
+}
+.grid .card .thumb { background:linear-gradient(135deg,#075078,#0a1b3a 58%,#020814); }
+.grid .card .thumb::after {
+  content:""; position:absolute; inset:45% 0 0;
+  background:linear-gradient(transparent,rgba(2,9,20,.42)); pointer-events:none;
+}
+.grid .card .info { padding:19px 20px 22px; }
+.grid .card .info h3 { color:#f1f7ff; font-size:1.08rem; line-height:1.35; }
+.grid .card:hover .info h3 { color:#54ddff; }
+.grid .card .info p { color:#91a9c8; }
+@keyframes itmaMenuEnter {
+  from { opacity:0; transform:translateY(12px); }
+  to { opacity:1; transform:translateY(0); }
+}
+@media(max-width:650px) {
+  #tabs { display:flex; flex-wrap:nowrap; overflow-x:auto; padding:10px; gap:9px; border-radius:15px; }
+  #tabs .tab { flex:0 0 auto; min-height:48px; padding:10px 15px; font-size:.88rem; }
+  .modulo h2 { min-height:54px; padding:10px 13px; margin-bottom:16px; }
+  .modulo h2::before { flex-basis:32px; height:32px; }
+  .grid { gap:15px; }
+  .grid .card:hover { transform:translateY(-3px); }
+}
+@media(prefers-reduced-motion:reduce) {
+  .modulo { animation:none; }
+  #tabs .tab,.grid .card { transition:none; }
 }
 
 /* Ajustes exclusivos de ITMA móvil */
