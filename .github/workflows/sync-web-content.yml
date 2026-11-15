@@ -50,8 +50,36 @@ jobs:
           .pfoto-acciones { display:flex; flex-wrap:wrap; gap:8px; }
           .pfoto-acciones .btn { font-size:.85rem; padding:8px 10px; }
           @media (max-width:420px) { .pfoto { align-items:flex-start; } .pfoto-acciones { flex-direction:column; } }
+
+          /* ITMA móvil v31 — fondo a pantalla completa, mejor encuadre y panel translúcido */
+          @media (max-width:760px) {
+            .login::before {
+              inset: 0 !important;
+              height: auto !important;
+              background-position: center center !important;
+              background-size: cover !important;
+              animation: none !important;
+              opacity: 1 !important;
+              filter: saturate(1.22) contrast(1.10) brightness(1.08) !important;
+              transform: none !important;
+            }
+            .login::after {
+              background: linear-gradient(
+                180deg,
+                rgba(1,7,18,.08) 0%,
+                rgba(1,7,18,.16) 48%,
+                rgba(1,7,18,.34) 100%
+              ) !important;
+            }
+            .login-box {
+              background: rgba(3,12,28,.43) !important;
+              border-color: rgba(91,218,255,.42) !important;
+              backdrop-filter: blur(5px) !important;
+              -webkit-backdrop-filter: blur(5px) !important;
+            }
+          }
           MOBILE_CSS
-          sed -i 's/styles\.css?v=[0-9]*/styles.css?v=30/' www/index.html
+          sed -i 's/styles\\.css?v=[0-9]*/styles.css?v=31/' www/index.html
 
       - name: Guardar cambios si existen
         run: |
