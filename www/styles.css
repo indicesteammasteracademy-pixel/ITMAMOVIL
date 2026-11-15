@@ -974,13 +974,13 @@
 .pfoto-acciones .btn { font-size:.85rem; padding:8px 10px; }
 @media (max-width:420px) { .pfoto { align-items:flex-start; } .pfoto-acciones { flex-direction:column; } }
 
-/* ITMA móvil v32 — fondo vertical exclusivo de la app; no afecta la web */
+/* ITMA móvil v33 — fondo vertical exclusivo de la app; no afecta la web */
 @media (max-width:760px) {
   .login::before {
     content: "" !important;
     inset: 0 !important;
     height: auto !important;
-    background-image: url("./ITMA_FONDO_MOVIL.jpg") !important;
+    background-image: url("./ITMA_FONDO_LOGIN_MOVIL.png") !important;
     background-position: center center !important;
     background-size: cover !important;
     background-repeat: no-repeat !important;
